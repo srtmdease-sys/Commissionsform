@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commission order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#d9547f;--pink-soft:#fde8ef;--pink-line:#f7a8c4;--olive:#6b7f2a;--olive-soft:#a7ba72;--bg:#eef0dc;--ink:#3a2a30;--muted:#7d6a71}
+*{box-sizing:border-box}
+body{margin:0;font-family:Figtree,system-ui,sans-serif;color:var(--ink);background:var(--bg);padding:24px 14px 120px;line-height:1.5}
+.card{min-width:0;background:var(--pink-soft);border:4px solid var(--pink-line);border-radius:32px;padding:28px 26px;
+background-image:linear-gradient(45deg,rgba(247,168,196,.22) 25%,transparent 25%,transparent 75%,rgba(247,168,196,.22) 75%),linear-gradient(45deg,rgba(247,168,196,.22) 25%,transparent 25%,transparent 75%,rgba(247,168,196,.22) 75%);background-size:90px 90px;background-position:0 0,45px 45px}
+h1{margin:0 0 4px;color:var(--pink);font-size:2rem;text-align:center}
+.sub{text-align:center;color:var(--muted);margin:0 0 18px}
+h2{color:var(--pink);font-size:1.35rem;margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid var(--pink-line)}
+h3{font-size:1rem;margin:20px 0 8px;color:var(--olive)}
+.dots{display:flex;gap:8px;justify-content:center;margin-bottom:18px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--pink-line);opacity:.5}
+.dots i.on{background:var(--olive);opacity:1}
+.step{display:none}.step.on{display:block}
+fieldset{border:0;padding:0;margin:0}
+.opts{display:flex;flex-wrap:wrap;gap:10px}
+.opts label{cursor:pointer}
+.opts input{position:absolute;opacity:0;pointer-events:none}
+.opts span{display:block;padding:10px 18px;border-radius:999px;background:#fff;border:2px solid var(--pink-line);font-weight:600}
+.opts input:checked+span{background:var(--olive);border-color:var(--olive);color:#fff}
+.opts input:focus-visible+span{outline:3px solid var(--pink);outline-offset:2px}
+.opts small{display:block;font-weight:400;opacity:.8}
+label.f{display:block;font-weight:600;margin:14px 0 4px}
+input[type=text],input[type=email],input[type=number],textarea{width:100%;padding:10px 14px;border:2px solid var(--pink-line);border-radius:16px;background:#fff;font:inherit;color:inherit}
+input:focus,textarea:focus{outline:3px solid rgba(217,84,127,.35);border-color:var(--pink)}
+textarea{min-height:84px;resize:vertical}
+.chk{display:flex;gap:10px;align-items:center;margin:14px 0;font-weight:600}
+.chk input{width:20px;height:20px;accent-color:var(--olive)}
+.desc{color:var(--muted);font-size:.92rem;margin:2px 0 8px}.desc:empty,.od:empty{display:none}.od{display:block;font-style:normal;font-weight:400;font-size:.8rem;opacity:.85;margin-top:2px}.opts span{border-radius:22px}
+.hint{color:var(--muted);font-size:.9rem;margin:2px 0 0}
+.nav{display:flex;justify-content:space-between;margin-top:24px;gap:10px}
+button{font:inherit;font-weight:700;border:0;border-radius:999px;padding:12px 26px;cursor:pointer;background:var(--olive);color:#fff}
+button.ghost{background:#fff;color:var(--olive);border:2px solid var(--olive-soft)}
+button:disabled{opacity:.6;cursor:wait}
+.logo{width:92px;height:92px;border-radius:50%;background:var(--pink);margin:0 auto 16px;overflow:hidden;box-shadow:0 6px 18px rgba(217,84,127,.25)}
+.logo img{width:100%;height:100%;object-fit:cover;display:block}
+.layout{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.receipt{position:sticky;top:16px;background:#fff;border:4px solid var(--pink-line);border-radius:28px;padding:20px 22px}
+.rk{margin:0;color:var(--pink);font-weight:700;font-size:.85rem;letter-spacing:.06em}
+.rt{margin:4px 0 12px;font-weight:700;font-size:1.15rem}
+.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--pink-line);font-size:.95rem}
+.row span:last-child{white-space:nowrap;font-weight:600}
+.row.q span:last-child{color:var(--muted);font-weight:500;font-size:.85rem}
+.rempty{color:var(--muted);font-size:.92rem;margin:0 0 8px}
+.rtot{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--pink-soft);border-radius:20px;padding:14px 16px;margin-top:14px;font-weight:600}
+.rtot b{color:var(--pink);font-size:1.4rem;text-align:right}
+.rnote{color:var(--muted);font-size:.85rem;margin:10px 0 0}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.receipt{position:static}}
+.bar{display:none;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:4px solid var(--pink-line);padding:12px 18px;display:flex;justify-content:center;gap:16px;align-items:baseline;z-index:5}
+@media(max-width:860px){.bar{display:flex}}
+.bar b{font-size:1.5rem;color:var(--pink)}
+.bar small{color:var(--muted)}
+.err{color:#b3261e;font-weight:600;margin-top:10px}
+.ok{text-align:center;padding:30px 0}
+.hide{display:none!important}
+@media(prefers-reduced-motion:no-preference){.step.on{animation:in .25s ease}@keyframes in{from{opacity:0;transform:translateY(6px)}}}
+</style>
+</head>
+<body>
+<!-- Para agregar tu arte arriba: <img src="TU-IMAGEN.png" alt="" style="max-width:100%;border-radius:24px;display:block;margin:0 auto 16px"> -->
+<div class="logo" id="logo" role="img" aria-label="Logo"></div>
+<div class="layout">
+<main class="card">
+<h1>Commission order</h1>
+<p class="sub">Fill this out and I'll get back to you with a final quote.</p>
+<div class="dots" id="dots"></div>
+
+<form id="form" novalidate>
+<!-- STEP 1 -->
+<section class="step on">
+<h2>Commission type</h2><p class="desc" data-d="d_type"></p>
+<div class="opts">
+<label><input type="radio" name="type" value="simple" required><span>Simple illustration<em class="od" data-d="o_simple"></em></span></label>
+<label><input type="radio" name="type" value="rendered"><span>Rendered illustration<em class="od" data-d="o_rendered"></em></span></label>
+<label><input type="radio" name="type" value="reference"><span>Reference sheet<em class="od" data-d="o_reference"></em></span></label>
+</div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step">
+<fieldset id="ill" disabled>
+<h2>Illustration details</h2>
+<h3>Body type</h3><p class="desc" data-d="d_body"></p>
+<div class="opts">
+<label><input type="radio" name="body" value="headshot" required><span>Headshot<em class="od" data-d="o_headshot"></em></span></label>
+<label><input type="radio" name="body" value="halfbody"><span>Halfbody<em class="od" data-d="o_halfbody"></em></span></label>
+<label><input type="radio" name="body" value="fullbody"><span>Fullbody<em class="od" data-d="o_fullbody"></em></span></label>
+</div>
+<label class="f" for="chars">Additional characters</label><p class="desc" data-d="d_chars"></p>
+<input type="number" id="chars" name="additional_characters" min="0" max="10" value="0">
+<p class="hint">Each additional character adds 75% of the base price.</p>
+<h3>Background</h3><p class="desc" data-d="d_background"></p>
+<div class="opts">
+<label><input type="radio" name="background" value="simple" required><span>Simple <small>included</small><em class="od" data-d="o_bg_simple"></em></span></label>
+<label><input type="radio" name="background" value="detailed"><span>Detailed <small>+80%</small><em class="od" data-d="o_bg_detailed"></em></span></label>
+</div>
+<label class="chk"><input type="checkbox" name="nsfw" value="yes"> NSFW (+35%)</label><p class="desc" data-d="d_nsfw"></p>
+<label class="f" for="i_q">Manually quoted details</label><p class="desc" data-d="d_iq"></p>
+<textarea id="i_q" name="illustration_manual_quote"></textarea>
+<label class="f" for="i_v">Extra versions</label><p class="desc" data-d="d_iv"></p>
+<textarea id="i_v" name="extra_versions"></textarea>
+<label class="f" for="i_s">Extra specifications</label><p class="desc" data-d="d_is"></p>
+<textarea id="i_s" name="extra_specifications"></textarea>
+</fieldset>
+
+<fieldset id="ref" disabled>
+<h2>Reference sheet details</h2>
+<h3>Reference type</h3><p class="desc" data-d="d_ref_type"></p>
+<div class="opts">
+<label><input type="radio" name="ref_type" value="simple" required><span>Simple<em class="od" data-d="o_ref_simple"></em></span></label>
+<label><input type="radio" name="ref_type" value="clean"><span>Clean lines<em class="od" data-d="o_ref_clean"></em></span></label>
+</div>
+<h3>How many of each?</h3>
+<label class="f" for="n_bust">Bust</label><p class="desc" data-d="d_bust"></p>
+<input type="number" id="n_bust" name="qty_bust" min="0" max="20" value="0">
+<label class="f" for="n_half">Halfbody</label><p class="desc" data-d="d_half"></p>
+<input type="number" id="n_half" name="qty_halfbody" min="0" max="20" value="0">
+<label class="f" for="n_full">Fullbody</label><p class="desc" data-d="d_full"></p>
+<input type="number" id="n_full" name="qty_fullbody" min="0" max="20" value="0">
+<h3>Is it a custom design?</h3><p class="desc" data-d="d_custom"></p>
+<div class="opts">
+<label><input type="radio" name="custom" value="no" required><span>No, I have a visual reference<em class="od" data-d="o_custom_no"></em></span></label>
+<label><input type="radio" name="custom" value="yes"><span>Yes, custom <small>+30% Simple / +50% Clean lines</small><em class="od" data-d="o_custom_yes"></em></span></label>
+</div>
+<label class="f" for="r_q">Manually quoted details</label><p class="desc" data-d="d_rq"></p>
+<textarea id="r_q" name="reference_manual_quote"></textarea>
+<label class="f" for="r_s">Specifications</label><p class="desc" data-d="d_rs"></p>
+<textarea id="r_s" name="reference_specifications"></textarea>
+<label class="f" for="r_a">Add-ons (props, close-ups...)</label><p class="desc" data-d="d_ra"></p>
+<textarea id="r_a" name="addons"></textarea>
+</fieldset>
+</section>
+
+<!-- STEP 3 -->
+<section class="step">
+<h2>Art direction</h2><p class="desc" data-d="d_direction"></p>
+<div class="opts">
+<label><input type="radio" name="direction" value="freedom" required><span>Freedom<em class="od" data-d="o_freedom"></em></span></label>
+<label><input type="radio" name="direction" value="specifications"><span>Specifications<em class="od" data-d="o_specs"></em></span></label>
+</div>
+<fieldset id="free" disabled>
+<label class="f" for="idea">General idea or preferences</label><p class="desc" data-d="d_idea"></p>
+<textarea id="idea" name="general_idea" required></textarea>
+</fieldset>
+<fieldset id="specs" disabled>
+<label class="f" for="pose">Pose</label><p class="desc" data-d="d_pose"></p><textarea id="pose" name="pose"></textarea>
+<label class="f" for="expr">Expression</label><p class="desc" data-d="d_expr"></p><textarea id="expr" name="expression"></textarea>
+<label class="f" for="comp">Composition</label><p class="desc" data-d="d_comp"></p><textarea id="comp" name="composition"></textarea>
+<label class="f" for="oth">Other details</label><p class="desc" data-d="d_oth"></p><textarea id="oth" name="other_details"></textarea>
+</fieldset>
+</section>
+
+<!-- STEP 4 -->
+<section class="step">
+<h2>Contact and character details</h2>
+<label class="f" for="email">Email</label><p class="desc" data-d="d_email"></p>
+<input type="email" id="email" name="email" required>
+<label class="f" for="social">Social media (with @)</label><p class="desc" data-d="d_social"></p>
+<input type="text" id="social" name="social" placeholder="@username" required>
+<label class="f" for="tz">Country or time zone</label><p class="desc" data-d="d_tz"></p>
+<input type="text" id="tz" name="country_timezone" required>
+<label class="f" for="cname">Character name</label><p class="desc" data-d="d_cname"></p>
+<input type="text" id="cname" name="character_name" required>
+<label class="f" for="species">Species</label><p class="desc" data-d="d_species"></p>
+<input type="text" id="species" name="species">
+<label class="f" for="refs">Reference links</label><p class="desc" data-d="d_refs"></p>
+<textarea id="refs" name="reference_links" required></textarea>
+<label class="f" for="desc">General description</label><p class="desc" data-d="d_desc"></p>
+<textarea id="desc" name="description"></textarea>
+<label class="f" for="notes">Extra notes</label><p class="desc" data-d="d_notes"></p>
+<textarea id="notes" name="notes"></textarea>
+</section>
+
+<!-- STEP 5 -->
+<section class="step">
+<h2>Payment</h2><p class="desc" data-d="d_payment"></p>
+<div class="opts">
+<label><input type="radio" name="payment" value="Full upfront" required><span>Full upfront<em class="od" data-d="o_full"></em></span></label>
+<label><input type="radio" name="payment" value="Custom payment plan"><span>Custom payment plan<em class="od" data-d="o_plan"></em></span></label>
+</div>
+<p class="hint" style="margin-top:18px">The total below is an estimate. Manually quoted details may change the final price, and I'll confirm everything before you pay.</p>
+<div class="err hide" id="err"></div>
+</section>
+
+<p class="desc" data-d="d_buttons" style="text-align:center;margin-top:18px"></p>
+<div class="nav">
+<button type="button" class="ghost hide" id="back">Back</button>
+<button type="button" id="next">Next</button>
+<button type="submit" class="hide" id="send">Send order</button>
+</div>
+</form>
+
+<div class="ok hide" id="done">
+<h2 style="border:0">Order sent!</h2>
+<p>Thank you! I'll review your details and contact you with the final quote.</p>
+</div>
+</main>
+<aside class="receipt" id="receipt" aria-live="polite">
+<p class="rk">Price breakdown</p>
+<p class="rt" id="rtitle">Choose a commission type</p>
+<div id="lines"></div>
+<div class="rtot"><span>Estimated total (USD)</span><b id="total">-</b></div>
+<p class="rnote">Anything marked "quoted separately" is priced by hand. I'll confirm the final price before you pay.</p>
+</aside>
+</div>
+
+<div class="bar" id="bar"><small>Estimated total (USD)</small><b id="total2">-</b></div>
+
+<script>
+/* ============ CONFIG: edit prices and the webhook here ============ */
+const LOGO_URL = "";      // Link o archivo de tu logo (ej. "logo.png"). Vacío = círculo rosa
+const WEBHOOK_URL = "";   // Pega aquí la URL del webhook de Make
+const PRICES = {
+  simple:   { headshot: 0, halfbody: 0, fullbody: 0 },   // Simple illustration (USD)
+  rendered: { headshot: 0, halfbody: 0, fullbody: 0 },   // Rendered illustration (USD)
+  ref: {
+    simple: { bust: 0, halfbody: 0, fullbody: 0 },       // Reference sheet, Simple (USD per unit)
+    clean:  { bust: 0, halfbody: 0, fullbody: 0 }        // Reference sheet, Clean lines (USD per unit)
+  }
+};
+/* ====== DESCRIPTIONS: write your text between the quotes. Empty = hidden ====== */
+const DESC = {
+  d_type:"", o_simple:"", o_rendered:"", o_reference:"",
+  d_body:"", o_headshot:"", o_halfbody:"", o_fullbody:"",
+  d_chars:"", d_background:"", o_bg_simple:"", o_bg_detailed:"", d_nsfw:"",
+  d_iq:"", d_iv:"", d_is:"",
+  d_ref_type:"", o_ref_simple:"", o_ref_clean:"", d_bust:"", d_half:"", d_full:"",
+  d_custom:"", o_custom_no:"", o_custom_yes:"", d_rq:"", d_rs:"", d_ra:"",
+  d_direction:"", o_freedom:"", o_specs:"", d_idea:"", d_pose:"", d_expr:"", d_comp:"", d_oth:"",
+  d_email:"", d_social:"", d_tz:"", d_cname:"", d_species:"", d_refs:"", d_desc:"", d_notes:"",
+  d_payment:"", o_full:"", o_plan:"",
+  d_buttons:""
+};
+/* ================================================================ */
+const PCT = { extraChar: 0.75, detailedBg: 0.80, nsfw: 0.35, customSimple: 0.30, customClean: 0.50 };
+/* ================================================================ */
+
+const $ = s => document.querySelector(s);
+const form = $('#form'), steps = [...document.querySelectorAll('.step')];
+let cur = 0, estimate = null;
+
+$('#dots').innerHTML = steps.map(() => '<i></i>').join('');
+const val = n => (form.querySelector(`[name="${n}"]:checked`) || {}).value;
+const num = n => Math.max(0, parseFloat(form.elements[n].value) || 0);
+
+const money = v => '$' + v.toFixed(2);
+const pct = x => Math.round(x * 100) + '%';
+const filled = names => names.some(n => form.elements[n] && !form.elements[n].disabled && form.elements[n].value.trim());
+let breakdown = '';
+
+function calc() {
+  const t = val('type');
+  const L = []; // [label, amount|null, isSurcharge]
+  let title = 'Choose a commission type';
+  if (t === 'simple' || t === 'rendered') {
+    title = t === 'simple' ? 'Simple illustration' : 'Rendered illustration';
+    const b = val('body');
+    if (b) {
+      const base = PRICES[t][b];
+      L.push([b.charAt(0).toUpperCase() + b.slice(1) + ' base', base, false]);
+      const n = num('additional_characters');
+      if (n > 0) L.push([`Additional character × ${n} (+${pct(PCT.extraChar)} each)`, base * PCT.extraChar * n, true]);
+      if (val('background') === 'detailed') L.push([`Detailed background (+${pct(PCT.detailedBg)})`, base * PCT.detailedBg, true]);
+      if (form.elements.nsfw.checked) L.push([`NSFW (+${pct(PCT.nsfw)})`, base * PCT.nsfw, true]);
+    }
+    if (filled(['illustration_manual_quote', 'extra_versions', 'extra_specifications'])) L.push(['Extra versions and details', null, false]);
+  } else if (t === 'reference') {
+    title = 'Reference sheet';
+    const r = val('ref_type');
+    if (r) {
+      const p = PRICES.ref[r];
+      title = 'Reference sheet (' + (r === 'simple' ? 'Simple' : 'Clean lines') + ')';
+      let sub = 0;
+      [['bust', 'Bust', 'qty_bust'], ['halfbody', 'Halfbody', 'qty_halfbody'], ['fullbody', 'Fullbody', 'qty_fullbody']].forEach(([k, name, f]) => {
+        const q = num(f);
+        if (q > 0) { L.push([`${name} × ${q} (${money(p[k])} each)`, p[k] * q, false]); sub += p[k] * q; }
+      });
+      if (val('custom') === 'yes') {
+        const c = r === 'simple' ? PCT.customSimple : PCT.customClean;
+        L.push([`Custom design (+${pct(c)})`, sub * c, true]);
+      }
+    }
+    if (filled(['reference_manual_quote', 'reference_specifications', 'addons'])) L.push(['Props, add-ons and extra details', null, false]);
+  }
+  const priced = L.filter(x => x[1] !== null);
+  const total = priced.length ? priced.reduce((a, x) => a + x[1], 0) : null;
+  estimate = total;
+  $('#rtitle').textContent = title;
+  const box = $('#lines'); box.textContent = '';
+  if (!L.length) { const e = document.createElement('p'); e.className = 'rempty'; e.textContent = 'Your choices will show up here with their price.'; box.appendChild(e); }
+  L.forEach(([label, amt, plus]) => {
+    const row = document.createElement('div'); row.className = 'row' + (amt === null ? ' q' : '');
+    const a = document.createElement('span'); a.textContent = label;
+    const b = document.createElement('span'); b.textContent = amt === null ? 'Quoted separately' : (plus ? '+' : '') + money(amt);
+    row.append(a, b); box.appendChild(row);
+  });
+  breakdown = L.map(([l, a, pl]) => l + ': ' + (a === null ? 'quoted separately' : (pl ? '+' : '') + money(a))).join(' | ');
+  const txt = total === null ? '-' : (total === 0 ? 'Prices coming soon' : money(total));
+  $('#total').textContent = txt; $('#total2').textContent = txt;
+}
+
+function sync() {
+  const t = val('type');
+  $('#ill').disabled = !(t === 'simple' || t === 'rendered');
+  $('#ref').disabled = t !== 'reference';
+  const d = val('direction');
+  $('#free').disabled = d !== 'freedom';
+  $('#specs').disabled = d !== 'specifications';
+  $('#free').classList.toggle('hide', d !== 'freedom');
+  $('#specs').classList.toggle('hide', d !== 'specifications');
+  $('#ill').classList.toggle('hide', $('#ill').disabled);
+  $('#ref').classList.toggle('hide', $('#ref').disabled);
+  calc();
+}
+
+function show(i) {
+  cur = i;
+  steps.forEach((s, k) => s.classList.toggle('on', k === i));
+  document.querySelectorAll('#dots i').forEach((d, k) => d.classList.toggle('on', k <= i));
+  $('#back').classList.toggle('hide', i === 0);
+  $('#next').classList.toggle('hide', i === steps.length - 1);
+  $('#send').classList.toggle('hide', i !== steps.length - 1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function valid() {
+  for (const el of steps[cur].querySelectorAll('input,textarea')) {
+    if (!el.disabled && !el.checkValidity()) { el.reportValidity(); return false; }
+  }
+  return true;
+}
+
+form.addEventListener('input', sync);
+form.addEventListener('change', sync);
+$('#next').onclick = () => { if (valid()) show(cur + 1); };
+$('#back').onclick = () => show(cur - 1);
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!valid()) return;
+  const err = $('#err'); err.classList.add('hide');
+  const data = new URLSearchParams();
+  new FormData(form).forEach((v, k) => data.append(k, v));
+  data.append('estimated_total_usd', estimate === null ? '' : estimate.toFixed(2));
+  data.append('price_breakdown', breakdown);
+  if (!WEBHOOK_URL) { console.log(Object.fromEntries(data)); err.textContent = 'Webhook not set yet. Check the console to see the data.'; err.classList.remove('hide'); return; }
+  $('#send').disabled = true;
+  try {
+    await fetch(WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: data });
+    form.classList.add('hide'); $('#dots').classList.add('hide'); $('#done').classList.remove('hide'); $('#bar').classList.add('hide'); $('#receipt').classList.add('hide');
+  } catch (x) {
+    err.textContent = 'Could not send the order. Please check your connection or DM me instead.'; err.classList.remove('hide'); $('#send').disabled = false;
+  }
+});
+
+document.querySelectorAll('[data-d]').forEach(el => { el.textContent = DESC[el.dataset.d] || ''; });
+if (LOGO_URL) { const im = document.createElement('img'); im.src = LOGO_URL; im.alt = ''; $('#logo').appendChild(im); }
+show(0); sync();
+</script>
+</body>
+</html>
